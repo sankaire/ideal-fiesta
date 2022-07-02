@@ -13,4 +13,5 @@ app.use(cors())
 
 app.use("/", postRouter)
 
-app.listen(4000, ()=>console.log(`post service running on 4000`))
+let server = app.listen(4000, ()=>console.log(`post service running on 4000`))
+server.timeout = 1000
