@@ -1,16 +1,36 @@
 const express = require("express");
-const cors = require("cors");
+const bodyParser = require("body-parser");
+const axios = require("axios");
 
 const app = express();
-const eventsRouter = require("./api/routes/events.routes");
+app.use(bodyParser.json());
 
-app.use(express.json());
-app.use(cors());
+const events = [];
 
-app.use("/events", eventsRouter);
+app.post("/events", (req, res) => {
+  const event = req.body;
 
-const port = 5001;
+  events.push(event);
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+  axios.post("http://localhost:4000/events", event).catch((err) => {
+    console.log(err.message);
+  });
+  axios.post("http://localhost:4001/events", event).catch((err) => {
+    console.log(err.message);
+  });
+  axios.post("http://localhost:4002/events", event).catch((err) => {
+    console.log(err.message);
+  });
+  axios.post("http://localhost:4003/events", event).catch((err) => {
+    console.log(err.message);
+  });
+  res.send({ status: "OK" });
+});
+
+app.get("/events", (req, res) => {
+  res.send(events);
+});
+
+app.listen(4005, () => {
+  console.log("Listening on 4005");
 });

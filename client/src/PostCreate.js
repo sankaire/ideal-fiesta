@@ -1,15 +1,19 @@
-import React, { useState, useStatefrom } from "react";
+import React, { useState } from "react";
 import axios from "axios";
-export default () => {
-  const [title, setTitle] = useState("");
-    const onSubmit = async(e) =>{
-        e.preventDefault()
 
-        await axios.post('http://localhost:4000/posts', {
-            title
-        })
-        setTitle('')
-    }
+const PostCreate = () => {
+  const [title, setTitle] = useState("");
+
+  const onSubmit = async (event) => {
+    event.preventDefault();
+
+    await axios.post("http://localhost:4000/posts", {
+      title,
+    });
+
+    setTitle("");
+  };
+
   return (
     <div>
       <form onSubmit={onSubmit}>
@@ -19,10 +23,12 @@ export default () => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="form-control"
-          ></input>
+          />
         </div>
         <button className="btn btn-primary">Submit</button>
       </form>
     </div>
   );
 };
+
+export default PostCreate;

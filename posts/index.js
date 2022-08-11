@@ -1,17 +1,40 @@
-const express = require('express');
-const cors = require("cors")
+const express = require("express"), bodyParser = require("body-parser"), {randomBytes} = require("crypto"),
+    cors = require("cors"), axios = require("axios"), app = express();
+app.use(bodyParser.json());
+app.use(cors());
 
-/**
- * pull in api
- */
-const postRouter = require("./api/routes/index.routes")
+const posts = {};
 
-const app = express()
+app.get("/posts", (req, res) => {
+  res.send(posts);
+});
 
-app.use(express.json())
-app.use(cors())
+app.post("/posts", async (req, res) => {
+  const id = randomBytes(4).toString("hex");
+  const { title } = req.body;
 
-app.use("/", postRouter)
+  posts[id] = {
+    id,
+    title,
+  };
 
-let server = app.listen(4000, ()=>console.log(`post service running on 4000`))
-server.timeout = 1000
+  await axios.post("http://localhost:4005/events", {
+    type: "PostCreated",
+    data: {
+      id,
+      title,
+    },
+  });
+
+  res.status(201).send(posts[id]);
+});
+
+app.post("/events", (req, res) => {
+  console.log("Received Event", req.body.type);
+
+  res.send({});
+});
+
+app.listen(4000, () => {
+  console.log("Listening on 4000");
+});
